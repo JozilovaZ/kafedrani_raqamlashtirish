@@ -1,0 +1,140 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<!-- Page Header -->
+<div class="page-header">
+    <div>
+        <div class="breadcrumb-nav">
+            <span>ASOSIY</span> / <span>HISOBOTLAR</span>
+        </div>
+        <h2>Statistika va Bashoratli Tahlil</h2>
+    </div>
+    <button class="btn btn-dark">
+        <i class="fas fa-download"></i> Yangi PDF hisobot
+    </button>
+</div>
+
+<div class="stats-grid-2">
+    <!-- Chart Section -->
+    <div class="card">
+        <div class="card-header-custom">
+            <h3 class="card-title">Oylik yuklama dinamikasi</h3>
+            <div class="chart-tabs">
+                <button class="tab active">OYLIK</button>
+                <button class="tab">BASHORATLI TAHLIL</button>
+            </div>
+        </div>
+        <p class="card-subtitle">O'tgan yil boshlanishidan beri umumiy ko'rsatkichlar</p>
+        <div class="chart-container">
+            <canvas id="workloadChart"></canvas>
+        </div>
+    </div>
+
+    <!-- Prognoz Card -->
+    <div class="card prognoz-card">
+        <div class="prognoz-badge">AI BASHORAT</div>
+        <h3>Prognoz: Bu oy o'rtacha {{ prognoz_foiz }}% yuklama bajariladi</h3>
+        <p>AI tahlil natijasiga ko'ra kelgusi oyda kafedra samaradorligi oshishi kutilmoqda</p>
+        <div class="prognoz-bar">
+            <div class="prognoz-fill" style="width: {{ prognoz_foiz }}%">
+                <span>{{ prognoz_foiz }}%</span>
+            </div>
+        </div>
+        <button class="btn btn-outline-dark">To'liq tahlil</button>
+    </div>
+</div>
+
+<div class="stats-grid-2">
+    <!-- Active Teachers -->
+    <div class="card">
+        <h3 class="card-title">Eng faol o'qituvchilar</h3>
+        <p class="card-subtitle">Oxirgi 30 kun ichida - O'tgan oyga nisbatan</p>
+        <div class="active-teachers-list">
+            {% for teacher in faol_oqituvchilar %}
+            <div class="active-teacher-item">
+                <div class="teacher-cell">
+                    <div class="teacher-avatar">
+                        <i class="fas fa-user"></i>
+                    </div>
+                    <div>
+                        <strong>{{ teacher.ism }}</strong>
+                        <span class="teacher-subject">{{ teacher.fan }}</span>
+                    </div>
+                </div>
+                <div class="teacher-hours">{{ teacher.soat }}</div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+
+    <!-- Feedback -->
+    <div class="card">
+        <h3 class="card-title">Talabalar feedbacki</h3>
+        <div class="feedback-display">
+            <div class="feedback-score">
+                <span class="score-number">{{ feedback_ball }}</span>
+                <div class="feedback-stars">
+                    <i class="fas fa-star"></i>
+                    <i class="fas fa-star"></i>
+                    <i class="fas fa-star"></i>
+                    <i class="fas fa-star"></i>
+                    <i class="fas fa-star"></i>
+                </div>
+                <span class="feedback-count">3,450 umumiy baho</span>
+            </div>
+        </div>
+        <div class="feedback-total">
+            <i class="fas fa-comments"></i>
+            <div>
+                <span class="total-number">{{ feedback_soni }} dona</span>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    const ctx = document.getElementById('workloadChart').getContext('2d');
+    const gradient = ctx.createLinearGradient(0, 0, 0, 300);
+    gradient.addColorStop(0, 'rgba(16, 185, 129, 0.3)');
+    gradient.addColorStop(1, 'rgba(16, 185, 129, 0.01)');
+
+    new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: ['Yan', 'Fev', 'Mar', 'Apr', 'May', 'Iyn', 'Iyl', 'Avg', 'Sen', 'Okt', 'Noy', 'Dek'],
+            datasets: [{
+                label: 'Yuklama (%)',
+                data: [65, 72, 58, 80, 75, 85, 90, 78, 82, 88, 92, 70],
+                borderColor: '#10b981',
+                backgroundColor: gradient,
+                fill: true,
+                tension: 0.4,
+                pointBackgroundColor: '#10b981',
+                pointBorderColor: '#fff',
+                pointBorderWidth: 2,
+                pointRadius: 4,
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: { display: false }
+            },
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    max: 100,
+                    grid: { color: '#f0f0f0' }
+                },
+                x: {
+                    grid: { display: false }
+                }
+            }
+        }
+    });
+</script>
+{% endblock %}

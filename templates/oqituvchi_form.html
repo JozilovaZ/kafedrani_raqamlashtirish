@@ -1,0 +1,136 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="section-header">
+    <h1 class="section-title">{{ page_title }}</h1>
+    <a href="{% url 'dashboard' %}" class="btn btn-secondary">
+        <i class="fas fa-arrow-left"></i> Orqaga
+    </a>
+</div>
+
+{% if messages %}
+<div class="messages-container">
+    {% for message in messages %}
+    <div class="alert alert-{{ message.tags }}">{{ message }}</div>
+    {% endfor %}
+</div>
+{% endif %}
+
+<div class="card" style="max-width:700px; margin:0 auto;">
+    <div class="card-body" style="padding:2rem;">
+        <form method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+            <div class="form-grid">
+                <div class="form-group">
+                    <label>Ism *</label>
+                    <input type="text" name="ism" class="form-control"
+                           value="{{ oqituvchi.ism|default:'' }}" required>
+                </div>
+                <div class="form-group">
+                    <label>Familiya *</label>
+                    <input type="text" name="familiya" class="form-control"
+                           value="{{ oqituvchi.familiya|default:'' }}" required>
+                </div>
+                <div class="form-group">
+                    <label>Lavozim</label>
+                    <select name="lavozim" class="form-control">
+                        {% for val, label in oqituvchi.LAVOZIM_CHOICES|default:"" %}
+                        <option value="{{ val }}" {% if oqituvchi.lavozim == val %}selected{% endif %}>{{ label }}</option>
+                        {% empty %}
+                        <option value="professor">Professor</option>
+                        <option value="dotsent">Dotsent</option>
+                        <option value="katta_oqituvchi" selected>Katta o'qituvchi</option>
+                        <option value="oqituvchi">O'qituvchi</option>
+                        <option value="assistant">Assistant</option>
+                        <option value="stajyor">Stajyor</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Kafedra *</label>
+                    <select name="kafedra" class="form-control" required>
+                        <option value="">-- Tanlang --</option>
+                        {% for k in kafedralar %}
+                        <option value="{{ k.pk }}" {% if oqituvchi.kafedra_id == k.pk %}selected{% endif %}>
+                            {{ k.nomi }}
+                        </option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Ilmiy daraja</label>
+                    <input type="text" name="ilmiy_daraja" class="form-control"
+                           value="{{ oqituvchi.ilmiy_daraja|default:'' }}">
+                </div>
+                <div class="form-group">
+                    <label>Telefon</label>
+                    <input type="text" name="telefon" class="form-control"
+                           value="{{ oqituvchi.telefon|default:'' }}">
+                </div>
+                <div class="form-group">
+                    <label>Email</label>
+                    <input type="email" name="email" class="form-control"
+                           value="{{ oqituvchi.email|default:'' }}">
+                </div>
+                <div class="form-group">
+                    <label>Stavka</label>
+                    <input type="number" name="stavka" step="0.25" min="0.25" max="2" class="form-control"
+                           value="{{ oqituvchi.stavka|default:'1.0' }}">
+                </div>
+                <div class="form-group">
+                    <label>Stavka turi</label>
+                    <select name="stavka_turi" class="form-control">
+                        <option value="asosiy" {% if oqituvchi.stavka_turi == 'asosiy' %}selected{% endif %}>Asosiy</option>
+                        <option value="orindosh" {% if oqituvchi.stavka_turi == 'orindosh' %}selected{% endif %}>O'rindosh</option>
+                        <option value="soatbay" {% if oqituvchi.stavka_turi == 'soatbay' %}selected{% endif %}>Soatbay</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Rasm</label>
+                    <input type="file" name="rasm" class="form-control" accept="image/*">
+                    {% if oqituvchi.rasm %}
+                    <small style="color:var(--text-secondary);">Hozirgi: {{ oqituvchi.rasm.name }}</small>
+                    {% endif %}
+                </div>
+            </div>
+
+            {% if not oqituvchi %}
+            <hr style="margin:1.5rem 0; border-color:var(--border-color);">
+            <h3 style="font-size:1rem; margin-bottom:1rem; color:var(--text-secondary);">
+                <i class="fas fa-lock"></i> Login ma'lumotlari (ixtiyoriy)
+            </h3>
+            <div class="form-grid">
+                <div class="form-group">
+                    <label>Username</label>
+                    <input type="text" name="username" class="form-control" autocomplete="off">
+                </div>
+                <div class="form-group">
+                    <label>Parol</label>
+                    <input type="password" name="password" class="form-control" autocomplete="new-password">
+                </div>
+            </div>
+            {% endif %}
+
+            <div style="display:flex; gap:1rem; margin-top:1.5rem;">
+                <button type="submit" class="btn btn-primary">
+                    <i class="fas fa-save"></i>
+                    {% if oqituvchi %}Saqlash{% else %}Qo'shish{% endif %}
+                </button>
+                <a href="{% url 'dashboard' %}" class="btn btn-secondary">Bekor qilish</a>
+            </div>
+        </form>
+    </div>
+</div>
+
+<style>
+.form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1.2rem; }
+.form-group { display: flex; flex-direction: column; gap: .4rem; }
+.form-group label { font-size: .85rem; font-weight: 600; color: var(--text-secondary); }
+.form-control {
+    padding: .55rem .9rem; border: 1px solid var(--border-color);
+    border-radius: 8px; background: var(--bg-primary); color: var(--text-primary);
+    font-size: .9rem; outline: none; transition: border-color .2s;
+}
+.form-control:focus { border-color: var(--primary-color); }
+@media(max-width:600px){ .form-grid{ grid-template-columns:1fr; } }
+</style>
+{% endblock %}

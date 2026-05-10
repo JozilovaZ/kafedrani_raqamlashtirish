@@ -1,0 +1,77 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="section-header">
+    <h1 class="section-title">{{ page_title }}</h1>
+    <a href="{% url 'database' %}" class="btn btn-secondary">
+        <i class="fas fa-arrow-left"></i> Orqaga
+    </a>
+</div>
+
+{% if messages %}
+<div class="messages-container">
+    {% for message in messages %}
+    <div class="alert alert-{{ message.tags }}">{{ message }}</div>
+    {% endfor %}
+</div>
+{% endif %}
+
+<div class="card" style="max-width:550px; margin:0 auto;">
+    <div class="card-body" style="padding:2rem;">
+        <form method="post">
+            {% csrf_token %}
+            <div class="form-grid">
+                <div class="form-group" style="grid-column:1/-1;">
+                    <label>Guruh nomi *</label>
+                    <input type="text" name="nomi" class="form-control" placeholder="masalan: 101-A"
+                           value="{{ guruh.nomi|default:'' }}" required>
+                </div>
+                <div class="form-group">
+                    <label>Yo'nalish</label>
+                    <input type="text" name="yonalish" class="form-control" placeholder="masalan: Fizika"
+                           value="{{ guruh.yonalish|default:'' }}">
+                </div>
+                <div class="form-group">
+                    <label>Kurs</label>
+                    <select name="kurs" class="form-control">
+                        {% for k in "12345" %}
+                        <option value="{{ k }}" {% if guruh.kurs|stringformat:"s" == k %}selected{% endif %}>{{ k }}-kurs</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Talabalar soni</label>
+                    <input type="number" name="talabalar_soni" class="form-control" min="0"
+                           value="{{ guruh.talabalar_soni|default:0 }}">
+                </div>
+                <div class="form-group">
+                    <label>Kafedra</label>
+                    <select name="kafedra" class="form-control">
+                        <option value="">-- Tanlang --</option>
+                        {% for k in kafedralar %}
+                        <option value="{{ k.pk }}" {% if guruh.kafedra_id == k.pk %}selected{% endif %}>{{ k.nomi }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+            </div>
+            <div style="display:flex; gap:1rem; margin-top:1.5rem;">
+                <button type="submit" class="btn btn-primary">
+                    <i class="fas fa-save"></i> Saqlash
+                </button>
+                <a href="{% url 'guruhlar_list' %}" class="btn btn-secondary">Bekor qilish</a>
+            </div>
+        </form>
+    </div>
+</div>
+
+<style>
+.form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1.2rem; }
+.form-group { display: flex; flex-direction: column; gap: .4rem; }
+.form-group label { font-size: .85rem; font-weight: 600; color: var(--text-secondary); }
+.form-control {
+    padding: .55rem .9rem; border: 1px solid var(--border-color);
+    border-radius: 8px; background: var(--bg-primary); color: var(--text-primary);
+    font-size: .9rem; outline: none; transition: border-color .2s;
+}
+.form-control:focus { border-color: var(--primary-color); }
+</style>
+{% endblock %}

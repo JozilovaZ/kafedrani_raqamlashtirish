@@ -1,0 +1,61 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="page-header">
+    <div>
+        <h2>Tahlil</h2>
+        <p style="color:#64748b;margin-top:6px;">Tizim rejadagi soatlardan bajarilganni ayirib, qoldiq yuklamani foizlarda ko'rsatadi.</p>
+    </div>
+</div>
+
+<div class="stats-grid" style="display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:24px;">
+    <div class="card">
+        <p style="color:#64748b;font-size:12px;">Reja (jami)</p>
+        <h2 style="margin-top:6px;">{{ jami_reja }} soat</h2>
+    </div>
+    <div class="card">
+        <p style="color:#64748b;font-size:12px;">Bajarilgan</p>
+        <h2 style="margin-top:6px;color:#16a34a;">{{ jami_bajarilgan }} soat</h2>
+    </div>
+    <div class="card">
+        <p style="color:#64748b;font-size:12px;">Qoldiq</p>
+        <h2 style="margin-top:6px;color:#dc2626;">{{ jami_qoldiq }} soat</h2>
+    </div>
+    <div class="card">
+        <p style="color:#64748b;font-size:12px;">Umumiy bajarilish</p>
+        <h2 style="margin-top:6px;">{{ umumiy_foiz }}%</h2>
+    </div>
+</div>
+
+<div class="card">
+    <h3 class="card-title">O'qituvchilar bo'yicha bajarilish</h3>
+    <table class="data-table plan-table">
+        <thead>
+            <tr>
+                <th>O'QITUVCHI</th><th>FAN</th>
+                <th>REJA</th><th>BAJARILGAN</th><th>QOLDIQ</th>
+                <th style="width:30%;">FOIZ</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for o in oqituvchilar %}
+            <tr>
+                <td>{{ o.ism }}</td>
+                <td>{{ o.fan }}</td>
+                <td>{{ o.reja }}</td>
+                <td><strong style="color:#16a34a;">{{ o.bajarilgan }}</strong></td>
+                <td><strong style="color:#dc2626;">{{ o.qoldiq }}</strong></td>
+                <td>
+                    <div style="display:flex;align-items:center;gap:10px;">
+                        <div style="flex:1;background:#e2e8f0;border-radius:6px;height:8px;overflow:hidden;">
+                            <div style="height:100%;width:{{ o.foiz }}%;background:{% if o.foiz >= 75 %}#16a34a{% elif o.foiz >= 60 %}#f59e0b{% else %}#dc2626{% endif %};"></div>
+                        </div>
+                        <strong>{{ o.foiz }}%</strong>
+                    </div>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

@@ -1,0 +1,294 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+
+<!-- ── SARLAVHA ─────────────────────────────────────────────── -->
+<div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1.5rem; flex-wrap:wrap; gap:1rem;">
+    <div>
+        <h2 style="margin:0; font-size:1.4rem; font-weight:700;">Yuklama jadvali</h2>
+        <p style="margin:.3rem 0 0; color:var(--text-secondary); font-size:.85rem;">
+            {% if oqituvchi %}{{ oqituvchi.toliq_ism }} &middot; {% endif %}
+            Fan bo'yicha reja va bajarilgan soatlar
+        </p>
+    </div>
+    {% if is_mudir and barcha_oqituvchilar %}
+    <form method="get" style="margin:0;">
+        <select name="oqituvchi" onchange="this.form.submit()"
+            style="padding:.5rem .9rem; border:1px solid var(--border-color); border-radius:9px;
+                   background:var(--bg-secondary); color:var(--text-primary); font-size:.84rem; cursor:pointer;">
+            {% for o in barcha_oqituvchilar %}
+            <option value="{{ o.pk }}" {% if oqituvchi and o.pk == oqituvchi.pk %}selected{% endif %}>{{ o.toliq_ism }}</option>
+            {% endfor %}
+        </select>
+    </form>
+    {% endif %}
+</div>
+
+<!-- ── UMUMIY STATISTIKA KARTALAR ───────────────────────────── -->
+<div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(160px,1fr)); gap:1rem; margin-bottom:1.5rem;">
+
+    <div class="card" style="padding:1.1rem 1.3rem; border-top:3px solid #6366f1;">
+        <div style="font-size:.68rem; color:var(--text-secondary); text-transform:uppercase; letter-spacing:.05em; margin-bottom:.4rem;">Jami kredit</div>
+        <div style="font-size:1.9rem; font-weight:800; color:#6366f1; line-height:1;">{{ jami_kredit }}</div>
+        <div style="font-size:.72rem; color:var(--text-secondary); margin-top:.2rem;">kredit</div>
+    </div>
+
+    <div class="card" style="padding:1.1rem 1.3rem; border-top:3px solid #3b82f6;">
+        <div style="font-size:.68rem; color:var(--text-secondary); text-transform:uppercase; letter-spacing:.05em; margin-bottom:.4rem;">Ma'ruza</div>
+        <div style="font-size:1.5rem; font-weight:800; color:#3b82f6; line-height:1;">{{ jami_maruza_jami }}</div>
+        <div style="font-size:.72rem; color:var(--text-secondary); margin-top:.2rem;">Reja: {{ jami_maruza_reja }} soat</div>
+        <div style="margin-top:.5rem; height:5px; background:#e5e7eb; border-radius:3px; overflow:hidden;">
+            <div style="width:{% if jami_maruza_reja > 0 %}{% widthratio jami_maruza_jami jami_maruza_reja 100 %}{% else %}0{% endif %}%;
+                        height:100%; background:#3b82f6; border-radius:3px;"></div>
+        </div>
+    </div>
+
+    <div class="card" style="padding:1.1rem 1.3rem; border-top:3px solid #10b981;">
+        <div style="font-size:.68rem; color:var(--text-secondary); text-transform:uppercase; letter-spacing:.05em; margin-bottom:.4rem;">Amaliyot</div>
+        <div style="font-size:1.5rem; font-weight:800; color:#10b981; line-height:1;">{{ jami_amaliyot_jami }}</div>
+        <div style="font-size:.72rem; color:var(--text-secondary); margin-top:.2rem;">Reja: {{ jami_amaliyot_reja }} soat</div>
+        <div style="margin-top:.5rem; height:5px; background:#e5e7eb; border-radius:3px; overflow:hidden;">
+            <div style="width:{% if jami_amaliyot_reja > 0 %}{% widthratio jami_amaliyot_jami jami_amaliyot_reja 100 %}{% else %}0{% endif %}%;
+                        height:100%; background:#10b981; border-radius:3px;"></div>
+        </div>
+    </div>
+
+    <div class="card" style="padding:1.1rem 1.3rem; border-top:3px solid #8b5cf6;">
+        <div style="font-size:.68rem; color:var(--text-secondary); text-transform:uppercase; letter-spacing:.05em; margin-bottom:.4rem;">Laboratoriya</div>
+        <div style="font-size:1.5rem; font-weight:800; color:#8b5cf6; line-height:1;">{{ jami_lab_jami }}</div>
+        <div style="font-size:.72rem; color:var(--text-secondary); margin-top:.2rem;">Reja: {{ jami_lab_reja }} soat</div>
+        <div style="margin-top:.5rem; height:5px; background:#e5e7eb; border-radius:3px; overflow:hidden;">
+            <div style="width:{% if jami_lab_reja > 0 %}{% widthratio jami_lab_jami jami_lab_reja 100 %}{% else %}0{% endif %}%;
+                        height:100%; background:#8b5cf6; border-radius:3px;"></div>
+        </div>
+    </div>
+
+    <div class="card" style="padding:1.1rem 1.3rem; border-top:3px solid {% if foiz >= 80 %}#10b981{% elif foiz >= 50 %}#f59e0b{% else %}#ef4444{% endif %};">
+        <div style="font-size:.68rem; color:var(--text-secondary); text-transform:uppercase; letter-spacing:.05em; margin-bottom:.4rem;">Bajarilgan</div>
+        <div style="font-size:1.9rem; font-weight:800; line-height:1;
+                    color:{% if foiz >= 80 %}#10b981{% elif foiz >= 50 %}#f59e0b{% else %}#ef4444{% endif %};">
+            {{ foiz }}%
+        </div>
+        <div style="font-size:.72rem; color:var(--text-secondary); margin-top:.2rem;">{{ jami_bajarilgan }} / {{ jami_reja }} soat</div>
+        <div style="margin-top:.5rem; height:5px; background:#e5e7eb; border-radius:3px; overflow:hidden;">
+            <div style="width:{{ foiz }}%; height:100%; border-radius:3px;
+                        background:{% if foiz >= 80 %}#10b981{% elif foiz >= 50 %}#f59e0b{% else %}#ef4444{% endif %};"></div>
+        </div>
+    </div>
+
+</div>
+
+<!-- ── JADVAL ─────────────────────────────────────────────────── -->
+{% if yuklama_semestrlar %}
+<div class="card" style="overflow:hidden;">
+    {% for semestr, yuklamalar in yuklama_semestrlar %}
+
+    <!-- Semestr sarlavhasi -->
+    <div style="padding:.65rem 1.2rem; background:linear-gradient(90deg,#6366f1,#8b5cf6);
+                color:#fff; font-weight:700; font-size:.85rem; display:flex; align-items:center; gap:.6rem;">
+        <i class="fas fa-layer-group" style="font-size:.8rem;"></i>
+        {{ semestr }}-semestr
+        <span style="margin-left:auto; background:rgba(255,255,255,.2); border-radius:20px;
+                     padding:2px 10px; font-size:.72rem; font-weight:600;">
+            {{ yuklamalar|length }} ta fan
+        </span>
+    </div>
+
+    <div style="overflow-x:auto;">
+    <table style="width:100%; border-collapse:collapse; font-size:.82rem;">
+        <thead>
+            <tr style="background:var(--bg-secondary);">
+                <th style="padding:10px 14px; text-align:left; border-bottom:2px solid var(--border-color); white-space:nowrap;">Fan nomi</th>
+                <th style="padding:10px 8px; text-align:center; border-bottom:2px solid var(--border-color);">Kredit</th>
+                <th style="padding:10px 8px; text-align:center; border-bottom:2px solid var(--border-color);">Kurs</th>
+                <th style="padding:10px 8px; text-align:center; border-bottom:2px solid var(--border-color);">Guruh</th>
+                <th colspan="2" style="padding:10px 8px; text-align:center; border-bottom:2px solid var(--border-color); color:#3b82f6; border-left:2px solid #bfdbfe;">
+                    Ma'ruza
+                </th>
+                <th colspan="2" style="padding:10px 8px; text-align:center; border-bottom:2px solid var(--border-color); color:#10b981; border-left:2px solid #bbf7d0;">
+                    Amaliyot
+                </th>
+                <th colspan="2" style="padding:10px 8px; text-align:center; border-bottom:2px solid var(--border-color); color:#8b5cf6; border-left:2px solid #ddd6fe;">
+                    Laboratoriya
+                </th>
+                <th style="padding:10px 10px; text-align:center; border-bottom:2px solid var(--border-color); font-weight:700; border-left:2px solid var(--border-color);">JAMI</th>
+                <th style="padding:10px 12px; border-bottom:2px solid var(--border-color); border-left:2px solid var(--border-color);">Holat</th>
+            </tr>
+            <tr style="background:#fafafa; font-size:.72rem; color:var(--text-secondary);">
+                <th style="padding:4px 14px; border-bottom:1px solid var(--border-color);"></th>
+                <th style="padding:4px 8px; border-bottom:1px solid var(--border-color);"></th>
+                <th style="padding:4px 8px; border-bottom:1px solid var(--border-color);"></th>
+                <th style="padding:4px 8px; border-bottom:1px solid var(--border-color);"></th>
+                <th style="padding:4px 6px; text-align:center; border-bottom:1px solid var(--border-color); border-left:2px solid #bfdbfe; color:#3b82f6;">Reja</th>
+                <th style="padding:4px 6px; text-align:center; border-bottom:1px solid var(--border-color); color:#3b82f6;">Jami</th>
+                <th style="padding:4px 6px; text-align:center; border-bottom:1px solid var(--border-color); border-left:2px solid #bbf7d0; color:#10b981;">Reja</th>
+                <th style="padding:4px 6px; text-align:center; border-bottom:1px solid var(--border-color); color:#10b981;">Jami</th>
+                <th style="padding:4px 6px; text-align:center; border-bottom:1px solid var(--border-color); border-left:2px solid #ddd6fe; color:#8b5cf6;">Reja</th>
+                <th style="padding:4px 6px; text-align:center; border-bottom:1px solid var(--border-color); color:#8b5cf6;">Jami</th>
+                <th style="padding:4px 10px; text-align:center; border-bottom:1px solid var(--border-color); border-left:2px solid var(--border-color);"></th>
+                <th style="padding:4px 12px; border-bottom:1px solid var(--border-color); border-left:2px solid var(--border-color);"></th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for y in yuklamalar %}
+            {% with m_ok=y.maruza_jami|floatformat:0 a_ok=y.amaliyot_jami|floatformat:0 %}
+            <tr style="border-bottom:1px solid var(--border-color); transition:background .15s;"
+                onmouseenter="this.style.background='var(--bg-secondary)'"
+                onmouseleave="this.style.background=''">
+
+                <!-- Fan nomi -->
+                <td style="padding:11px 14px;">
+                    <div style="font-weight:600; color:var(--text-primary);">{{ y.fan_nomi }}</div>
+                    {% if y.izoh %}<div style="font-size:.7rem; color:var(--text-secondary);">{{ y.izoh }}</div>{% endif %}
+                    {% if y.yonalish %}<div style="font-size:.7rem; color:#6366f1;">{{ y.yonalish }}</div>{% endif %}
+                </td>
+
+                <!-- Kredit -->
+                <td style="padding:11px 8px; text-align:center;">
+                    <span style="background:#ede9fe; color:#6d28d9; border-radius:6px; padding:2px 8px; font-weight:700; font-size:.78rem;">{{ y.kredit }}</span>
+                </td>
+
+                <!-- Kurs -->
+                <td style="padding:11px 8px; text-align:center; font-weight:600; color:var(--text-secondary);">{{ y.kurs }}</td>
+
+                <!-- Guruh soni -->
+                <td style="padding:11px 8px; text-align:center; font-weight:600; color:var(--text-secondary);">{{ y.guruh_soni }}</td>
+
+                <!-- Ma'ruza reja -->
+                <td style="padding:11px 6px; text-align:center; color:#3b82f6; font-weight:600; border-left:2px solid #bfdbfe;">{{ y.maruza_reja }}</td>
+
+                <!-- Ma'ruza jami -->
+                <td style="padding:11px 6px; text-align:center;">
+                    <span style="font-weight:700;
+                        {% if y.maruza_reja == 0 %}color:var(--text-secondary);
+                        {% elif y.maruza_jami >= y.maruza_reja %}color:#059669;
+                        {% else %}color:#d97706;{% endif %}">
+                        {{ y.maruza_jami }}
+                    </span>
+                </td>
+
+                <!-- Amaliyot reja -->
+                <td style="padding:11px 6px; text-align:center; color:#10b981; font-weight:600; border-left:2px solid #bbf7d0;">{{ y.amaliyot_reja }}</td>
+
+                <!-- Amaliyot jami -->
+                <td style="padding:11px 6px; text-align:center;">
+                    <span style="font-weight:700;
+                        {% if y.amaliyot_reja == 0 %}color:var(--text-secondary);
+                        {% elif y.amaliyot_jami >= y.amaliyot_reja %}color:#059669;
+                        {% else %}color:#d97706;{% endif %}">
+                        {{ y.amaliyot_jami }}
+                    </span>
+                </td>
+
+                <!-- Lab reja -->
+                <td style="padding:11px 6px; text-align:center; color:#8b5cf6; font-weight:600; border-left:2px solid #ddd6fe;">{{ y.laboratoriya_reja }}</td>
+
+                <!-- Lab jami -->
+                <td style="padding:11px 6px; text-align:center;">
+                    <span style="font-weight:700;
+                        {% if y.laboratoriya_reja == 0 %}color:var(--text-secondary);
+                        {% elif y.laboratoriya_jami >= y.laboratoriya_reja %}color:#059669;
+                        {% else %}color:#d97706;{% endif %}">
+                        {{ y.laboratoriya_jami }}
+                    </span>
+                </td>
+
+                <!-- Jami -->
+                <td style="padding:11px 10px; text-align:center; font-weight:800; font-size:.9rem;
+                           background:#fffbeb; border-left:2px solid var(--border-color); color:#92400e;">
+                    {{ y.jami }}
+                </td>
+
+                <!-- Holat progress -->
+                <td style="padding:11px 12px; min-width:110px; border-left:2px solid var(--border-color);">
+                    {% with reja=y.maruza_reja|add:y.amaliyot_reja bajarilgan=y.maruza_jami|add:y.amaliyot_jami %}
+                    {% if reja > 0 %}
+                    {% widthratio bajarilgan reja 100 as fp %}
+                    <div style="display:flex; align-items:center; gap:.4rem;">
+                        <div style="flex:1; height:6px; background:#e5e7eb; border-radius:3px; overflow:hidden;">
+                            <div style="width:{{ fp }}%; height:100%; border-radius:3px;
+                                        background:{% if fp >= 100 %}#10b981{% elif fp >= 50 %}#f59e0b{% else %}#ef4444{% endif %};"></div>
+                        </div>
+                        <span style="font-size:.72rem; font-weight:700; min-width:28px; text-align:right;
+                                     color:{% if fp >= 100 %}#10b981{% elif fp >= 50 %}#f59e0b{% else %}#ef4444{% endif %};">
+                            {{ fp }}%
+                        </span>
+                    </div>
+                    {% else %}
+                    <span style="font-size:.72rem; color:var(--text-secondary);">—</span>
+                    {% endif %}
+                    {% endwith %}
+                </td>
+            </tr>
+            {% endwith %}
+            {% endfor %}
+        </tbody>
+
+        <!-- Semestr jami -->
+        <tfoot>
+            <tr style="background:linear-gradient(90deg,#f0fdf4,#dcfce7); font-weight:700; border-top:2px solid #10b981;">
+                <td style="padding:10px 14px; color:#065f46;">{{ semestr }}-semestr jami</td>
+                <td style="padding:10px 8px; text-align:center; color:#6d28d9;">
+                    {% with sm=0 %}
+                    {% for y in yuklamalar %}{% endfor %}
+                    {% endwith %}
+                </td>
+                <td colspan="2" style="padding:10px 8px;"></td>
+                <td style="padding:10px 6px; text-align:center; color:#3b82f6; border-left:2px solid #bfdbfe;">
+                    {% for y in yuklamalar %}{{ y.maruza_reja|add:0 }}{% endfor %}
+                </td>
+                <td style="padding:10px 6px; text-align:center; color:#059669;">
+                    {% for y in yuklamalar %}{{ y.maruza_jami|add:0 }}{% endfor %}
+                </td>
+                <td style="padding:10px 6px; text-align:center; color:#10b981; border-left:2px solid #bbf7d0;">
+                    {% for y in yuklamalar %}{{ y.amaliyot_reja|add:0 }}{% endfor %}
+                </td>
+                <td style="padding:10px 6px; text-align:center; color:#059669;">
+                    {% for y in yuklamalar %}{{ y.amaliyot_jami|add:0 }}{% endfor %}
+                </td>
+                <td style="padding:10px 6px; text-align:center; color:#8b5cf6; border-left:2px solid #ddd6fe;">
+                    {% for y in yuklamalar %}{{ y.laboratoriya_reja|add:0 }}{% endfor %}
+                </td>
+                <td style="padding:10px 6px; text-align:center; color:#059669;">
+                    {% for y in yuklamalar %}{{ y.laboratoriya_jami|add:0 }}{% endfor %}
+                </td>
+                <td style="padding:10px 10px; text-align:center; color:#92400e; font-size:.92rem; border-left:2px solid var(--border-color);">
+                    {% for y in yuklamalar %}{{ y.jami|add:0 }}{% endfor %}
+                </td>
+                <td style="border-left:2px solid var(--border-color);"></td>
+            </tr>
+        </tfoot>
+    </table>
+    </div>
+    {% endfor %}
+
+    <!-- UMUMIY JAMI -->
+    <div style="padding:12px 16px; background:linear-gradient(90deg,#1e293b,#334155);
+                display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:1rem;">
+        <span style="color:rgba(255,255,255,.8); font-size:.85rem; font-weight:600;">
+            <i class="fas fa-sigma" style="margin-right:.4rem;"></i> Umumiy jami yuklama
+        </span>
+        <div style="display:flex; gap:1.5rem; align-items:center; flex-wrap:wrap;">
+            <span style="color:rgba(255,255,255,.7); font-size:.8rem;">
+                Reja: <strong style="color:#fff;">{{ jami_reja }}</strong> soat
+            </span>
+            <span style="color:rgba(255,255,255,.7); font-size:.8rem;">
+                Bajarilgan: <strong style="color:#10b981;">{{ jami_bajarilgan }}</strong> soat
+            </span>
+            <span style="background:rgba(255,255,255,.15); color:#fff; border-radius:10px;
+                         padding:.35rem .9rem; font-weight:800; font-size:.95rem;">
+                {{ jami_yuklama }} soat
+            </span>
+        </div>
+    </div>
+</div>
+
+{% else %}
+<div class="card" style="text-align:center; padding:4rem 2rem;">
+    <i class="fas fa-inbox" style="font-size:3rem; color:#c4b5fd; display:block; margin-bottom:1rem;"></i>
+    <h3 style="margin:0 0 .5rem; color:var(--text-primary);">Yuklama ma'lumotlari yo'q</h3>
+    <p style="color:var(--text-secondary); margin:0;">Hali bu o'qituvchi uchun yuklama jadvali kiritilmagan.</p>
+</div>
+{% endif %}
+
+{% endblock %}

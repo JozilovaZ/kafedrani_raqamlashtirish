@@ -1,0 +1,25 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(venv/Scripts/python.exe -c 'from docx import Document; d=Document\\('\\\\''jadval.docx'\\\\''\\); *)",
+      "Bash(venv/Scripts/pip.exe install *)",
+      "Bash(venv/Scripts/python.exe -c ' *)",
+      "Bash(venv/Scripts/python.exe)",
+      "Bash(venv/Scripts/python.exe manage.py makemigrations)",
+      "Bash(venv/Scripts/python.exe manage.py migrate)",
+      "Bash(venv/Scripts/python.exe manage.py check)",
+      "Bash(venv\\\\Scripts\\\\python.exe manage.py makemigrations)",
+      "Bash(venv\\\\Scripts\\\\python.exe manage.py migrate)",
+      "Bash(venvScriptspython.exe -c ' *)",
+      "Bash(Get-ChildItem -Path \"D:\\\\topshiriqlar\\\\kafedra\" -Recurse -Force)",
+      "Bash(Select-Object -ExpandProperty FullName)",
+      "Bash(Head -100)",
+      "Bash(python manage.py makemigrations)",
+      "Bash(python manage.py migrate)",
+      "Bash(python *)",
+      "Bash(git init *)",
+      "Bash(git remote *)",
+      "Bash(git add *)"
+    ]
+  }
+}

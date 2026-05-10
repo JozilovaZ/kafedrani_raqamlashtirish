@@ -1,0 +1,414 @@
+{% extends 'base.html' %}
+{% block content %}
+
+<!-- ── WELCOME BANNER ────────────────────────────────────────── -->
+<div style="background:linear-gradient(135deg,#1e293b 0%,#334155 60%,#475569 100%);
+            border-radius:16px; padding:2rem 2rem 1.6rem; margin-bottom:1.5rem;
+            display:flex; align-items:center; justify-content:space-between; gap:1rem; flex-wrap:wrap;">
+    <div style="display:flex; align-items:center; gap:1.2rem;">
+        <div style="width:60px; height:60px; border-radius:14px; background:rgba(255,255,255,.12);
+                    display:flex; align-items:center; justify-content:center; font-size:1.8rem;">
+            🎓
+        </div>
+        <div>
+            <p style="color:rgba(255,255,255,.6); font-size:.78rem; margin:0 0 .2rem; letter-spacing:.04em; text-transform:uppercase;">Kafedra boshqaruv tizimi</p>
+            <h2 style="color:#fff; margin:0; font-size:1.35rem; font-weight:700;">
+                {% if kafedra %}{{ kafedra.nomi }}{% else %}Academic Nexus{% endif %}
+            </h2>
+            <p style="color:rgba(255,255,255,.7); font-size:.82rem; margin:.3rem 0 0;">
+                Xush kelibsiz, <strong style="color:#fff;">Kafedra Mudiri</strong>
+            </p>
+        </div>
+    </div>
+    <div style="display:flex; gap:.75rem; flex-wrap:wrap;">
+        <a href="{% url 'oqituvchi_create' %}"
+           style="display:flex; align-items:center; gap:.5rem; padding:.6rem 1.1rem; border-radius:10px;
+                  background:rgba(255,255,255,.15); color:#fff; font-size:.82rem; font-weight:600;
+                  border:1px solid rgba(255,255,255,.25); text-decoration:none; transition:background .2s;"
+           onmouseenter="this.style.background='rgba(255,255,255,.25)'"
+           onmouseleave="this.style.background='rgba(255,255,255,.15)'">
+            <i class="fas fa-user-plus"></i> O'qituvchi qo'shish
+        </a>
+        <a href="{% url 'dars_create' %}"
+           style="display:flex; align-items:center; gap:.5rem; padding:.6rem 1.1rem; border-radius:10px;
+                  background:linear-gradient(135deg,#6366f1,#8b5cf6); color:#fff; font-size:.82rem; font-weight:600;
+                  border:none; text-decoration:none;"
+           onmouseenter="this.style.opacity='.9'" onmouseleave="this.style.opacity='1'">
+            <i class="fas fa-plus"></i> Dars qo'shish
+        </a>
+    </div>
+</div>
+
+{% if messages %}
+<div style="margin-bottom:1rem;">
+    {% for message in messages %}
+    <div class="alert alert-{{ message.tags }}">{{ message }}</div>
+    {% endfor %}
+</div>
+{% endif %}
+
+<!-- ── ASOSIY STAT KARTOCHKALAR ──────────────────────────────── -->
+<div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(180px,1fr)); gap:1rem; margin-bottom:1.5rem;">
+
+    <a href="{% url 'oqituvchilar_list' %}" style="text-decoration:none;">
+    <div class="card" style="padding:1.3rem 1.4rem; display:flex; align-items:center; gap:1rem;
+                              border-left:4px solid #6366f1; transition:box-shadow .2s;"
+         onmouseenter="this.style.boxShadow='0 6px 20px rgba(99,102,241,.2)'"
+         onmouseleave="this.style.boxShadow=''">
+        <div style="width:46px; height:46px; border-radius:12px; background:#ede9fe;
+                    display:flex; align-items:center; justify-content:center; flex-shrink:0;">
+            <i class="fas fa-users" style="color:#7c3aed; font-size:1.2rem;"></i>
+        </div>
+        <div>
+            <div style="font-size:1.7rem; font-weight:800; color:#1e293b; line-height:1;">{{ oqituvchi_soni }}</div>
+            <div style="font-size:.75rem; color:var(--text-secondary); margin-top:.2rem;">O'qituvchilar</div>
+        </div>
+    </div>
+    </a>
+
+    <a href="{% url 'darslar_list' %}" style="text-decoration:none;">
+    <div class="card" style="padding:1.3rem 1.4rem; display:flex; align-items:center; gap:1rem;
+                              border-left:4px solid #3b82f6; transition:box-shadow .2s;"
+         onmouseenter="this.style.boxShadow='0 6px 20px rgba(59,130,246,.2)'"
+         onmouseleave="this.style.boxShadow=''">
+        <div style="width:46px; height:46px; border-radius:12px; background:#dbeafe;
+                    display:flex; align-items:center; justify-content:center; flex-shrink:0;">
+            <i class="fas fa-calendar-alt" style="color:#2563eb; font-size:1.2rem;"></i>
+        </div>
+        <div>
+            <div style="font-size:1.7rem; font-weight:800; color:#1e293b; line-height:1;">{{ dars_soni }}</div>
+            <div style="font-size:.75rem; color:var(--text-secondary); margin-top:.2rem;">Haftalik darslar</div>
+        </div>
+    </div>
+    </a>
+
+    <a href="{% url 'guruhlar_list' %}" style="text-decoration:none;">
+    <div class="card" style="padding:1.3rem 1.4rem; display:flex; align-items:center; gap:1rem;
+                              border-left:4px solid #10b981; transition:box-shadow .2s;"
+         onmouseenter="this.style.boxShadow='0 6px 20px rgba(16,185,129,.2)'"
+         onmouseleave="this.style.boxShadow=''">
+        <div style="width:46px; height:46px; border-radius:12px; background:#d1fae5;
+                    display:flex; align-items:center; justify-content:center; flex-shrink:0;">
+            <i class="fas fa-layer-group" style="color:#059669; font-size:1.2rem;"></i>
+        </div>
+        <div>
+            <div style="font-size:1.7rem; font-weight:800; color:#1e293b; line-height:1;">{{ guruh_soni }}</div>
+            <div style="font-size:.75rem; color:var(--text-secondary); margin-top:.2rem;">Guruhlar</div>
+        </div>
+    </div>
+    </a>
+
+    <div class="card" style="padding:1.3rem 1.4rem; display:flex; align-items:center; gap:1rem;
+                              border-left:4px solid #f59e0b;">
+        <div style="width:46px; height:46px; border-radius:12px; background:#fef3c7;
+                    display:flex; align-items:center; justify-content:center; flex-shrink:0;">
+            <i class="fas fa-book" style="color:#d97706; font-size:1.2rem;"></i>
+        </div>
+        <div>
+            <div style="font-size:1.7rem; font-weight:800; color:#1e293b; line-height:1;">{{ fan_soni }}</div>
+            <div style="font-size:.75rem; color:var(--text-secondary); margin-top:.2rem;">Fanlar</div>
+        </div>
+    </div>
+
+</div>
+
+<!-- ── YUKLAMA UMUMIY + DARS PROGRESS ────────────────────────── -->
+<div style="display:grid; grid-template-columns:2fr 1fr; gap:1rem; margin-bottom:1.5rem;">
+
+    <!-- Yuklama holati -->
+    <div class="card" style="padding:1.5rem;">
+        <h3 style="margin:0 0 1.2rem; font-size:1rem; font-weight:700;">Umumiy yuklama holati</h3>
+        <div style="display:flex; align-items:center; gap:2rem; flex-wrap:wrap;">
+            <!-- Donut ring (CSS) -->
+            <div style="position:relative; width:110px; height:110px; flex-shrink:0;">
+                <svg viewBox="0 0 36 36" style="width:110px; height:110px; transform:rotate(-90deg);">
+                    <circle cx="18" cy="18" r="15.9" fill="none" stroke="#e5e7eb" stroke-width="3"/>
+                    <circle cx="18" cy="18" r="15.9" fill="none"
+                            stroke="{% if umumiy_foiz >= 80 %}#10b981{% elif umumiy_foiz >= 50 %}#f59e0b{% else %}#ef4444{% endif %}"
+                            stroke-width="3"
+                            stroke-dasharray="{{ umumiy_foiz }} {{ 100|add:'-'|add:umumiy_foiz|stringformat:'s' }}"
+                            stroke-linecap="round"/>
+                </svg>
+                <div style="position:absolute; inset:0; display:flex; flex-direction:column;
+                            align-items:center; justify-content:center;">
+                    <span style="font-size:1.3rem; font-weight:800; color:{% if umumiy_foiz >= 80 %}#10b981{% elif umumiy_foiz >= 50 %}#f59e0b{% else %}#ef4444{% endif %};">
+                        {{ umumiy_foiz }}%
+                    </span>
+                </div>
+            </div>
+            <div style="flex:1; min-width:180px;">
+                <!-- Ma'ruza -->
+                <div style="margin-bottom:.9rem;">
+                    <div style="display:flex; justify-content:space-between; font-size:.78rem; margin-bottom:.3rem;">
+                        <span style="color:var(--text-secondary);">Ma'ruza</span>
+                        <span style="font-weight:600; color:#3b82f6;">{{ maruza_soat }} / {{ maruza_reja }} s.</span>
+                    </div>
+                    <div style="height:7px; background:#e5e7eb; border-radius:4px; overflow:hidden;">
+                        <div style="width:{% if maruza_reja > 0 %}{% widthratio maruza_soat maruza_reja 100 %}{% else %}0{% endif %}%;
+                                    height:100%; background:#3b82f6; border-radius:4px;"></div>
+                    </div>
+                </div>
+                <!-- Amaliyot -->
+                <div style="margin-bottom:.9rem;">
+                    <div style="display:flex; justify-content:space-between; font-size:.78rem; margin-bottom:.3rem;">
+                        <span style="color:var(--text-secondary);">Amaliyot</span>
+                        <span style="font-weight:600; color:#10b981;">{{ amaliyot_soat }} / {{ amaliyot_reja }} s.</span>
+                    </div>
+                    <div style="height:7px; background:#e5e7eb; border-radius:4px; overflow:hidden;">
+                        <div style="width:{% if amaliyot_reja > 0 %}{% widthratio amaliyot_soat amaliyot_reja 100 %}{% else %}0{% endif %}%;
+                                    height:100%; background:#10b981; border-radius:4px;"></div>
+                    </div>
+                </div>
+                <!-- Laboratoriya -->
+                <div>
+                    <div style="display:flex; justify-content:space-between; font-size:.78rem; margin-bottom:.3rem;">
+                        <span style="color:var(--text-secondary);">Laboratoriya</span>
+                        <span style="font-weight:600; color:#8b5cf6;">{{ lab_soat }} / {{ lab_reja }} s.</span>
+                    </div>
+                    <div style="height:7px; background:#e5e7eb; border-radius:4px; overflow:hidden;">
+                        <div style="width:{% if lab_reja > 0 %}{% widthratio lab_soat lab_reja 100 %}{% else %}0{% endif %}%;
+                                    height:100%; background:#8b5cf6; border-radius:4px;"></div>
+                    </div>
+                </div>
+            </div>
+            <div style="text-align:center; padding:1rem 1.2rem; background:var(--bg-secondary); border-radius:12px; min-width:110px;">
+                <div style="font-size:1.4rem; font-weight:800; color:#1e293b;">{{ jami_bajarilgan }}</div>
+                <div style="font-size:.7rem; color:var(--text-secondary); margin:.1rem 0;">bajarilgan soat</div>
+                <div style="font-size:.75rem; color:var(--text-secondary); border-top:1px solid var(--border-color); padding-top:.4rem; margin-top:.4rem;">
+                    Reja: <strong>{{ jami_reja }}</strong> s.
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Haftalik dars holati -->
+    <div class="card" style="padding:1.5rem; display:flex; flex-direction:column; justify-content:space-between;">
+        <h3 style="margin:0 0 1rem; font-size:1rem; font-weight:700;">Haftalik darslar</h3>
+        <div style="display:flex; flex-direction:column; gap:.75rem;">
+            <div style="display:flex; align-items:center; justify-content:space-between; padding:.7rem 1rem;
+                        background:#d1fae5; border-radius:10px;">
+                <div style="display:flex; align-items:center; gap:.6rem;">
+                    <i class="fas fa-check-circle" style="color:#059669;"></i>
+                    <span style="font-size:.82rem; color:#065f46; font-weight:600;">O'tilgan</span>
+                </div>
+                <span style="font-size:1.3rem; font-weight:800; color:#059669;">{{ bajarilgan_dars }}</span>
+            </div>
+            <div style="display:flex; align-items:center; justify-content:space-between; padding:.7rem 1rem;
+                        background:#fef3c7; border-radius:10px;">
+                <div style="display:flex; align-items:center; gap:.6rem;">
+                    <i class="fas fa-clock" style="color:#d97706;"></i>
+                    <span style="font-size:.82rem; color:#92400e; font-weight:600;">Qolgan</span>
+                </div>
+                <span style="font-size:1.3rem; font-weight:800; color:#d97706;">{{ qolgan_dars }}</span>
+            </div>
+            <div style="display:flex; align-items:center; justify-content:space-between; padding:.7rem 1rem;
+                        background:var(--bg-secondary); border-radius:10px; border:1px solid var(--border-color);">
+                <div style="display:flex; align-items:center; gap:.6rem;">
+                    <i class="fas fa-calendar-week" style="color:#6366f1;"></i>
+                    <span style="font-size:.82rem; font-weight:600;">Jami slot</span>
+                </div>
+                <span style="font-size:1.3rem; font-weight:800; color:#6366f1;">{{ dars_soni }}</span>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ── QATOR 3: TOP O'QITUVCHILAR + LAVOZIM TAQSIMOTI ────────── -->
+<div style="display:grid; grid-template-columns:3fr 2fr; gap:1rem; margin-bottom:1.5rem;">
+
+    <!-- Top o'qituvchilar -->
+    <div class="card" style="padding:1.5rem;">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1.1rem;">
+            <h3 style="margin:0; font-size:1rem; font-weight:700;">Faol o'qituvchilar</h3>
+            <a href="{% url 'oqituvchilar_list' %}" style="font-size:.78rem; color:#6366f1; font-weight:600; text-decoration:none;">
+                Hammasi <i class="fas fa-arrow-right" style="font-size:.7rem;"></i>
+            </a>
+        </div>
+        <div style="display:flex; flex-direction:column; gap:.7rem;">
+            {% for item in top_oqituvchilar %}
+            {% with o=item.obj %}
+            <div style="display:flex; align-items:center; gap:.9rem;">
+                <!-- Avatar -->
+                <div style="width:40px; height:40px; border-radius:50%; overflow:hidden; flex-shrink:0;
+                            background:{% if item.lavozim_rang == 'purple' %}#ede9fe{% elif item.lavozim_rang == 'blue' %}#dbeafe{% elif item.lavozim_rang == 'green' %}#d1fae5{% else %}#fef3c7{% endif %};
+                            display:flex; align-items:center; justify-content:center;">
+                    {% if o.rasm %}
+                    <img src="{{ o.rasm.url }}" style="width:100%;height:100%;object-fit:cover;">
+                    {% else %}
+                    <i class="fas fa-user" style="font-size:.9rem; color:{% if item.lavozim_rang == 'purple' %}#7c3aed{% elif item.lavozim_rang == 'blue' %}#2563eb{% elif item.lavozim_rang == 'green' %}#059669{% else %}#d97706{% endif %};"></i>
+                    {% endif %}
+                </div>
+                <div style="flex:1; min-width:0;">
+                    <div style="font-weight:600; font-size:.85rem; color:var(--text-primary);
+                                white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">{{ item.ism }}</div>
+                    <div style="font-size:.72rem; color:var(--text-secondary);">{{ item.lavozim }}</div>
+                </div>
+                <div style="text-align:right; flex-shrink:0;">
+                    <div style="font-weight:700; font-size:.88rem;
+                                color:{% if item.yuklama_foiz >= 80 %}#10b981{% elif item.yuklama_foiz >= 50 %}#f59e0b{% else %}#ef4444{% endif %};">
+                        {{ item.yuklama_foiz }}%
+                    </div>
+                    <div style="font-size:.68rem; color:var(--text-secondary);">{{ item.jami_soat }} s.</div>
+                </div>
+                <div style="width:55px; flex-shrink:0;">
+                    <div style="height:5px; background:#e5e7eb; border-radius:3px; overflow:hidden;">
+                        <div style="width:{{ item.yuklama_foiz }}%; height:100%; border-radius:3px;
+                                    background:{% if item.yuklama_foiz >= 80 %}#10b981{% elif item.yuklama_foiz >= 50 %}#f59e0b{% else %}#ef4444{% endif %};"></div>
+                    </div>
+                </div>
+            </div>
+            {% endwith %}
+            {% empty %}
+            <p style="color:var(--text-secondary); font-size:.84rem; text-align:center; padding:1rem 0;">
+                Ma'lumot yo'q
+            </p>
+            {% endfor %}
+        </div>
+    </div>
+
+    <!-- Lavozim taqsimoti -->
+    <div class="card" style="padding:1.5rem;">
+        <h3 style="margin:0 0 1.1rem; font-size:1rem; font-weight:700;">Lavozim taqsimoti</h3>
+        <div style="display:flex; flex-direction:column; gap:.6rem;">
+            {% for ls in lavozim_stat %}
+            <div style="display:flex; align-items:center; gap:.75rem;">
+                <div style="width:10px; height:10px; border-radius:50%; flex-shrink:0;
+                            background:{% if ls.rang == 'purple' %}#8b5cf6{% elif ls.rang == 'blue' %}#3b82f6{% elif ls.rang == 'green' %}#10b981{% elif ls.rang == 'teal' %}#14b8a6{% elif ls.rang == 'orange' %}#f59e0b{% else %}#ef4444{% endif %};"></div>
+                <span style="flex:1; font-size:.82rem; color:var(--text-primary);">{{ ls.nom }}</span>
+                <span style="font-size:.8rem; font-weight:700; color:var(--text-primary);">{{ ls.soni }}</span>
+                <div style="width:60px;">
+                    <div style="height:5px; background:#e5e7eb; border-radius:3px; overflow:hidden;">
+                        <div style="width:{% widthratio ls.soni oqituvchi_soni 100 %}%; height:100%; border-radius:3px;
+                                    background:{% if ls.rang == 'purple' %}#8b5cf6{% elif ls.rang == 'blue' %}#3b82f6{% elif ls.rang == 'green' %}#10b981{% elif ls.rang == 'teal' %}#14b8a6{% elif ls.rang == 'orange' %}#f59e0b{% else %}#ef4444{% endif %};"></div>
+                    </div>
+                </div>
+            </div>
+            {% empty %}
+            <p style="color:var(--text-secondary); font-size:.84rem;">Ma'lumot yo'q</p>
+            {% endfor %}
+        </div>
+
+        {% if muammo_oqituvchilar %}
+        <div style="margin-top:1.3rem; padding-top:1rem; border-top:1px solid var(--border-color);">
+            <div style="font-size:.78rem; font-weight:700; color:#ef4444; margin-bottom:.6rem;">
+                <i class="fas fa-exclamation-triangle"></i> Yuklama past (&lt;50%)
+            </div>
+            {% for item in muammo_oqituvchilar %}
+            <div style="display:flex; align-items:center; justify-content:space-between;
+                        padding:.4rem .7rem; background:#fff1f2; border-radius:7px; margin-bottom:.35rem;">
+                <span style="font-size:.78rem; font-weight:500; color:#be123c;">{{ item.ism }}</span>
+                <span style="font-size:.78rem; font-weight:700; color:#ef4444;">{{ item.yuklama_foiz }}%</span>
+            </div>
+            {% endfor %}
+        </div>
+        {% endif %}
+    </div>
+</div>
+
+<!-- ── O'QITUVCHILAR JADVALI ─────────────────────────────────── -->
+<div class="card">
+    <div style="display:flex; justify-content:space-between; align-items:center; padding:1.2rem 1.4rem; border-bottom:1px solid var(--border-color);">
+        <div>
+            <h3 style="margin:0; font-size:1rem; font-weight:700;">Barcha o'qituvchilar</h3>
+            <p style="margin:.2rem 0 0; font-size:.75rem; color:var(--text-secondary);">Yuklama va dars holati</p>
+        </div>
+        <a href="{% url 'oqituvchilar_list' %}" style="font-size:.8rem; color:#6366f1; font-weight:600; text-decoration:none;
+                   padding:.45rem .9rem; border:1px solid #c7d2fe; border-radius:8px; background:#f5f3ff;">
+            To'liq ro'yxat <i class="fas fa-arrow-right" style="font-size:.7rem;"></i>
+        </a>
+    </div>
+    <div style="overflow-x:auto;">
+        <table style="width:100%; border-collapse:collapse; font-size:.83rem;">
+            <thead>
+                <tr style="background:var(--bg-secondary);">
+                    <th style="padding:10px 14px; text-align:left; border-bottom:1px solid var(--border-color); font-size:.72rem; text-transform:uppercase; letter-spacing:.04em; color:var(--text-secondary);">#</th>
+                    <th style="padding:10px 14px; text-align:left; border-bottom:1px solid var(--border-color); font-size:.72rem; text-transform:uppercase; letter-spacing:.04em; color:var(--text-secondary);">O'qituvchi</th>
+                    <th style="padding:10px 10px; text-align:center; border-bottom:1px solid var(--border-color); font-size:.72rem; text-transform:uppercase; letter-spacing:.04em; color:var(--text-secondary);">Lavozim</th>
+                    <th style="padding:10px 10px; text-align:center; border-bottom:1px solid var(--border-color); font-size:.72rem; text-transform:uppercase; letter-spacing:.04em; color:var(--text-secondary);">Dars/hafta</th>
+                    <th style="padding:10px 10px; text-align:center; border-bottom:1px solid var(--border-color); font-size:.72rem; text-transform:uppercase; letter-spacing:.04em; color:var(--text-secondary);">Bajarilgan</th>
+                    <th style="padding:10px 14px; border-bottom:1px solid var(--border-color); font-size:.72rem; text-transform:uppercase; letter-spacing:.04em; color:var(--text-secondary);">Yuklama holati</th>
+                    <th style="padding:10px 14px; text-align:center; border-bottom:1px solid var(--border-color); font-size:.72rem; text-transform:uppercase; letter-spacing:.04em; color:var(--text-secondary);">Amallar</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for item in oqituvchilar %}
+                {% with o=item.obj %}
+                <tr style="border-bottom:1px solid var(--border-color); transition:background .15s;"
+                    onmouseenter="this.style.background='var(--bg-secondary)'"
+                    onmouseleave="this.style.background=''">
+                    <td style="padding:11px 14px; color:var(--text-secondary);">{{ forloop.counter }}</td>
+                    <td style="padding:11px 14px;">
+                        <div style="display:flex; align-items:center; gap:.75rem;">
+                            <div style="width:38px; height:38px; border-radius:50%; overflow:hidden; flex-shrink:0;
+                                        background:{% if item.lavozim_rang == 'purple' %}#ede9fe{% elif item.lavozim_rang == 'blue' %}#dbeafe{% elif item.lavozim_rang == 'green' %}#d1fae5{% else %}#fef3c7{% endif %};
+                                        display:flex; align-items:center; justify-content:center;">
+                                {% if o.rasm %}
+                                <img src="{{ o.rasm.url }}" style="width:100%;height:100%;object-fit:cover;">
+                                {% else %}
+                                <i class="fas fa-user" style="font-size:.8rem; color:{% if item.lavozim_rang == 'purple' %}#7c3aed{% elif item.lavozim_rang == 'blue' %}#2563eb{% elif item.lavozim_rang == 'green' %}#059669{% else %}#d97706{% endif %};"></i>
+                                {% endif %}
+                            </div>
+                            <div>
+                                <div style="font-weight:600; color:var(--text-primary);">{{ item.ism }}</div>
+                                {% if o.email %}<div style="font-size:.72rem; color:var(--text-secondary);">{{ o.email }}</div>{% endif %}
+                            </div>
+                        </div>
+                    </td>
+                    <td style="padding:11px 10px; text-align:center;">
+                        <span style="font-size:.72rem; font-weight:600; padding:3px 10px; border-radius:20px;
+                            {% if item.lavozim_rang == 'purple' %}background:#ede9fe; color:#6d28d9;
+                            {% elif item.lavozim_rang == 'blue' %}background:#dbeafe; color:#1d4ed8;
+                            {% elif item.lavozim_rang == 'green' %}background:#d1fae5; color:#065f46;
+                            {% elif item.lavozim_rang == 'teal' %}background:#ccfbf1; color:#0f766e;
+                            {% elif item.lavozim_rang == 'orange' %}background:#fef3c7; color:#92400e;
+                            {% else %}background:#fee2e2; color:#991b1b;{% endif %}">
+                            {{ item.lavozim }}
+                        </span>
+                    </td>
+                    <td style="padding:11px 10px; text-align:center; font-weight:600; color:#6366f1;">{{ item.dars_soni }}</td>
+                    <td style="padding:11px 10px; text-align:center; font-weight:600; color:#10b981;">{{ item.jami_soat }} s.</td>
+                    <td style="padding:11px 14px;">
+                        <div style="display:flex; align-items:center; gap:.6rem;">
+                            <div style="flex:1; height:6px; background:#e5e7eb; border-radius:3px; overflow:hidden;">
+                                <div style="width:{{ item.yuklama_foiz }}%; height:100%; border-radius:3px;
+                                            background:{% if item.yuklama_foiz >= 80 %}#10b981{% elif item.yuklama_foiz >= 50 %}#f59e0b{% else %}#ef4444{% endif %};"></div>
+                            </div>
+                            <span style="font-weight:700; font-size:.8rem; min-width:36px; text-align:right;
+                                         color:{% if item.yuklama_foiz >= 80 %}#10b981{% elif item.yuklama_foiz >= 50 %}#f59e0b{% else %}#ef4444{% endif %};">
+                                {{ item.yuklama_foiz }}%
+                            </span>
+                        </div>
+                    </td>
+                    <td style="padding:11px 14px; text-align:center;">
+                        <div style="display:flex; gap:.4rem; justify-content:center;">
+                            <a href="{% url 'teacher_dashboard' %}?oqituvchi={{ o.pk }}"
+                               style="padding:5px 9px; border-radius:7px; background:#eff6ff; color:#2563eb; font-size:.78rem; border:1px solid #bfdbfe; text-decoration:none;" title="Ko'rish">
+                                <i class="fas fa-eye"></i>
+                            </a>
+                            <a href="{% url 'oqituvchi_update' o.pk %}"
+                               style="padding:5px 9px; border-radius:7px; background:#fffbeb; color:#d97706; font-size:.78rem; border:1px solid #fde68a; text-decoration:none;" title="Tahrirlash">
+                                <i class="fas fa-edit"></i>
+                            </a>
+                            <a href="{% url 'oqituvchi_delete' o.pk %}"
+                               style="padding:5px 9px; border-radius:7px; background:#fff1f2; color:#e11d48; font-size:.78rem; border:1px solid #fecdd3; text-decoration:none;" title="O'chirish">
+                                <i class="fas fa-trash"></i>
+                            </a>
+                        </div>
+                    </td>
+                </tr>
+                {% endwith %}
+                {% empty %}
+                <tr>
+                    <td colspan="7" style="text-align:center; padding:3rem; color:var(--text-secondary);">
+                        <i class="fas fa-users" style="font-size:2rem; display:block; margin-bottom:.75rem; color:#c4b5fd;"></i>
+                        Hali o'qituvchi qo'shilmagan.
+                        <a href="{% url 'oqituvchi_create' %}" style="color:#6366f1; font-weight:600;">Qo'shish</a>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+{% endblock %}

@@ -1,0 +1,66 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="page-header">
+    <div>
+        <h2>Yakuniy hisobot</h2>
+        <p style="color:#64748b;margin-top:6px;">{{ oquv_yili }} o'quv yili, {{ semestr }} bo'yicha to'plangan ma'lumotlar.</p>
+    </div>
+    <div class="header-actions">
+        <button class="btn btn-outline" onclick="window.print()"><i class="fas fa-print"></i> Chop etish</button>
+        <button class="btn btn-dark"><i class="fas fa-file-export"></i> Excel'ga eksport</button>
+    </div>
+</div>
+
+<div class="card" style="margin-bottom:20px;">
+    <div style="display:flex;justify-content:space-between;flex-wrap:wrap;gap:20px;">
+        <div>
+            <p style="color:#64748b;font-size:12px;">JAMI REJA</p>
+            <h2>{{ jami_reja }} soat</h2>
+        </div>
+        <div>
+            <p style="color:#64748b;font-size:12px;">JAMI BAJARILGAN</p>
+            <h2 style="color:#16a34a;">{{ jami_bajarilgan }} soat</h2>
+        </div>
+        <div>
+            <p style="color:#64748b;font-size:12px;">SEMESTR</p>
+            <h2>{{ semestr }}</h2>
+        </div>
+        <div>
+            <p style="color:#64748b;font-size:12px;">O'QUV YILI</p>
+            <h2>{{ oquv_yili }}</h2>
+        </div>
+    </div>
+</div>
+
+<div class="card">
+    <h3 class="card-title">O'qituvchilar bo'yicha yakuniy hisobot</h3>
+    <table class="data-table plan-table">
+        <thead>
+            <tr>
+                <th>O'QITUVCHI</th>
+                <th>MA'RUZA</th><th>AMALIYOT</th><th>LAB</th>
+                <th>JAMI BAJARILGAN</th><th>REJA</th><th>%</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for o in oqituvchilar %}
+            <tr>
+                <td>{{ o.ism }}</td>
+                <td>{{ o.maruza }}</td>
+                <td>{{ o.amaliyot }}</td>
+                <td>{{ o.lab }}</td>
+                <td><strong>{{ o.jami }}</strong></td>
+                <td>{{ o.reja }}</td>
+                <td>
+                    <span style="padding:4px 10px;border-radius:6px;font-weight:600;
+                        background:{% if o.foiz >= 75 %}#dcfce7;color:#15803d{% elif o.foiz >= 60 %}#fef3c7;color:#a16207{% else %}#fee2e2;color:#b91c1c{% endif %};">
+                        {{ o.foiz }}%
+                    </span>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

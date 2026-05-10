@@ -1,0 +1,134 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<!-- Page Header -->
+<div class="page-header">
+    <div>
+        <h2>{{ oquv_yili }} o'quv yili uchun kafedra yuklarining shakllantirish</h2>
+    </div>
+    <div class="header-actions">
+        <button class="btn btn-outline"><i class="fas fa-print"></i> Chop etish</button>
+        <button class="btn btn-dark"><i class="fas fa-save"></i> Saqlash</button>
+    </div>
+</div>
+
+<div class="planning-grid">
+    <!-- Yangi yuklama qo'shish -->
+    <div class="card">
+        <h3 class="card-title">Yangi yuklama qo'shish</h3>
+        <form class="planning-form">
+            <div class="form-group">
+                <label>O'qituvchini tanlang</label>
+                <select class="form-control">
+                    <option>Tanlang...</option>
+                    <option>Dr. Anvar Qodirov</option>
+                    <option>Prof. Malika Sultonova</option>
+                    <option>Jasur Ortiqov</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label>Fanni tanlang</label>
+                <select class="form-control">
+                    <option>Tanlang...</option>
+                    <option>Kvant mexanikasi</option>
+                    <option>Yadro fizikasi</option>
+                    <option>Elektrodinamika</option>
+                </select>
+            </div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Ma'ruza (soat)</label>
+                    <input type="number" class="form-control" placeholder="0">
+                </div>
+                <div class="form-group">
+                    <label>Amaliyot (soat)</label>
+                    <input type="number" class="form-control" placeholder="0">
+                </div>
+                <div class="form-group">
+                    <label>Laboratoriya (soat)</label>
+                    <input type="number" class="form-control" placeholder="0">
+                </div>
+            </div>
+            <div class="form-group">
+                <label>Semestr</label>
+                <div class="semester-buttons">
+                    <button type="button" class="btn btn-semester active">1-semestr</button>
+                    <button type="button" class="btn btn-semester">2-semestr</button>
+                </div>
+            </div>
+            <button type="button" class="btn btn-dark btn-block">
+                <i class="fas fa-plus"></i> Yuklama qo'shish
+            </button>
+        </form>
+    </div>
+
+    <!-- Umumiy kafedra rejasi -->
+    <div class="card">
+        <h3 class="card-title">Umumiy kafedra rejasi</h3>
+        <div class="plan-table-container">
+            <table class="data-table plan-table">
+                <thead>
+                    <tr>
+                        <th>O'QITUVCHI</th>
+                        <th>FAN</th>
+                        <th>MA'RUZA</th>
+                        <th>AMALIYOT</th>
+                        <th>LAB</th>
+                        <th>JAMI</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Dr. Anvar Qodirov</td>
+                        <td>Kvant mexanikasi</td>
+                        <td>60</td>
+                        <td>30</td>
+                        <td>20</td>
+                        <td><strong>110</strong></td>
+                        <td>
+                            <button class="btn-icon"><i class="fas fa-edit"></i></button>
+                            <button class="btn-icon text-danger"><i class="fas fa-trash"></i></button>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>Prof. Malika Sultonova</td>
+                        <td>Elektrodinamika</td>
+                        <td>50</td>
+                        <td>40</td>
+                        <td>28</td>
+                        <td><strong>118</strong></td>
+                        <td>
+                            <button class="btn-icon"><i class="fas fa-edit"></i></button>
+                            <button class="btn-icon text-danger"><i class="fas fa-trash"></i></button>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>Jasur Ortiqov</td>
+                        <td>Mexanika</td>
+                        <td>42</td>
+                        <td>36</td>
+                        <td>24</td>
+                        <td><strong>102</strong></td>
+                        <td>
+                            <button class="btn-icon"><i class="fas fa-edit"></i></button>
+                            <button class="btn-icon text-danger"><i class="fas fa-trash"></i></button>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="plan-summary">
+            <div class="summary-item">
+                <span class="summary-label">Jami o'qituvchilar:</span>
+                <span class="summary-value">3</span>
+            </div>
+            <div class="summary-item">
+                <span class="summary-label">Jami soatlar:</span>
+                <span class="summary-value">330 soat</span>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

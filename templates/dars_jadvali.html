@@ -1,0 +1,268 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+
+<!-- ── SARLAVHA ─────────────────────────────────────────────── -->
+<div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1.5rem; flex-wrap:wrap; gap:1rem;">
+    <div>
+        <h2 style="margin:0; font-size:1.4rem; font-weight:700;">Dars jadvali</h2>
+        <p style="margin:.3rem 0 0; color:var(--text-secondary); font-size:.85rem;">
+            {% if oqituvchi %}{{ oqituvchi.toliq_ism }} &middot; {% endif %}
+            Haftalik dars vaqtlari
+        </p>
+    </div>
+    <div style="display:flex; gap:.75rem; align-items:center; flex-wrap:wrap;">
+        {% if is_mudir and barcha_oqituvchilar %}
+        <form method="get" style="margin:0;">
+            <select name="oqituvchi" onchange="this.form.submit()"
+                style="padding:.5rem .9rem; border:1px solid var(--border-color); border-radius:9px;
+                       background:var(--bg-secondary); color:var(--text-primary); font-size:.84rem; cursor:pointer;">
+                {% for o in barcha_oqituvchilar %}
+                <option value="{{ o.pk }}" {% if oqituvchi and o.pk == oqituvchi.pk %}selected{% endif %}>{{ o.toliq_ism }}</option>
+                {% endfor %}
+            </select>
+        </form>
+        {% endif %}
+        {% if is_mudir %}
+        <a href="{% url 'dars_create' %}" class="btn btn-primary" style="display:flex; align-items:center; gap:.5rem;">
+            <i class="fas fa-plus"></i> Dars qo'shish
+        </a>
+        {% endif %}
+    </div>
+</div>
+
+<!-- ── MINI STAT KARTOCHKALAR ────────────────────────────────── -->
+<div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(150px,1fr)); gap:.9rem; margin-bottom:1.5rem;">
+    <div class="card" style="padding:1rem 1.2rem; text-align:center; border-top:3px solid #6366f1;">
+        <div style="font-size:1.8rem; font-weight:800; color:#6366f1;">{{ jami_dars }}</div>
+        <div style="font-size:.72rem; color:var(--text-secondary); margin-top:.2rem;">Jami dars (haftalik)</div>
+    </div>
+    <div class="card" style="padding:1rem 1.2rem; text-align:center; border-top:3px solid #10b981;">
+        <div style="font-size:1.8rem; font-weight:800; color:#10b981;">{{ bajarilgan_dars }}</div>
+        <div style="font-size:.72rem; color:var(--text-secondary); margin-top:.2rem;">O'tilgan ✓</div>
+    </div>
+    <div class="card" style="padding:1rem 1.2rem; text-align:center; border-top:3px solid #f59e0b;">
+        <div style="font-size:1.8rem; font-weight:800; color:#f59e0b;">{{ qolgan_dars }}</div>
+        <div style="font-size:.72rem; color:var(--text-secondary); margin-top:.2rem;">Qolgan</div>
+    </div>
+    <div class="card" style="padding:1rem 1.2rem; text-align:center; border-top:3px solid #8b5cf6;">
+        <div style="font-size:1.8rem; font-weight:800; color:#8b5cf6;">
+            {% if jami_dars %}{% widthratio bajarilgan_dars jami_dars 100 %}{% else %}0{% endif %}%
+        </div>
+        <div style="font-size:.72rem; color:var(--text-secondary); margin-top:.2rem;">Bajarilgan</div>
+    </div>
+</div>
+
+<!-- ── HAFTALIK JADVAL ────────────────────────────────────────── -->
+<div class="card" style="margin-bottom:1.5rem; overflow:hidden;">
+    <div style="padding:1.1rem 1.4rem; border-bottom:1px solid var(--border-color);
+                display:flex; align-items:center; gap:.75rem;">
+        <i class="fas fa-calendar-week" style="color:#6366f1; font-size:1.1rem;"></i>
+        <div>
+            <h3 style="margin:0; font-size:1rem; font-weight:700;">Haftalik jadval</h3>
+            <p style="margin:0; font-size:.75rem; color:var(--text-secondary);">Darsni o'tkazgandan keyin belgini bosing ✓</p>
+        </div>
+    </div>
+
+    <div style="display:grid; grid-template-columns:repeat(6,1fr); gap:0; overflow-x:auto;">
+        {% for kun_nomi, darslar in haftalik_jadval %}
+        <div style="border-right:1px solid var(--border-color);">
+            <!-- Kun sarlavhasi -->
+            <div style="padding:.6rem .5rem; text-align:center; font-size:.72rem; font-weight:700;
+                        background:linear-gradient(135deg,#6366f1,#8b5cf6); color:#fff; letter-spacing:.04em;">
+                {{ kun_nomi }}
+            </div>
+            <div style="padding:.5rem; min-height:80px;">
+                {% for dars in darslar %}
+                <div id="dars-card-{{ dars.pk }}"
+                     style="border-radius:9px; padding:.6rem .75rem; margin-bottom:.4rem; font-size:.76rem;
+                            border-left:3px solid {% if dars.turi == 'maruza' %}#3b82f6{% elif dars.turi == 'amaliyot' %}#10b981{% elif dars.turi == 'laboratoriya' %}#8b5cf6{% else %}#f59e0b{% endif %};
+                            background:{% if dars.bajarildi %}{% if dars.turi == 'maruza' %}#dbeafe{% elif dars.turi == 'amaliyot' %}#d1fae5{% elif dars.turi == 'laboratoriya' %}#ede9fe{% else %}#fef3c7{% endif %}{% else %}var(--bg-secondary){% endif %};
+                            position:relative; transition:all .2s;">
+
+                    <!-- O'tildi badge -->
+                    {% if dars.bajarildi %}
+                    <span class="done-badge" style="position:absolute; top:.35rem; right:.35rem; background:#10b981; color:#fff;
+                                 border-radius:50%; width:17px; height:17px; display:flex; align-items:center;
+                                 justify-content:center; font-size:.58rem;">
+                        <i class="fas fa-check"></i>
+                    </span>
+                    {% endif %}
+
+                    <!-- Fan nomi -->
+                    <div style="font-weight:700; color:var(--text-primary); line-height:1.3; padding-right:{% if dars.bajarildi %}18px{% else %}0{% endif %};">
+                        {{ dars.fan.nomi }}
+                    </div>
+
+                    <!-- Tur -->
+                    <div style="font-size:.67rem; font-weight:600; margin:.2rem 0;
+                                color:{% if dars.turi == 'maruza' %}#2563eb{% elif dars.turi == 'amaliyot' %}#059669{% elif dars.turi == 'laboratoriya' %}#7c3aed{% else %}#d97706{% endif %};">
+                        {{ dars.get_turi_display }}
+                    </div>
+
+                    <!-- Vaqt -->
+                    <div style="color:var(--text-secondary); font-size:.67rem; display:flex; align-items:center; gap:.25rem;">
+                        <i class="fas fa-clock" style="font-size:.58rem;"></i>
+                        {{ dars.boshlanish_vaqti|time:"H:i" }}–{{ dars.tugash_vaqti|time:"H:i" }}
+                    </div>
+
+                    {% if dars.guruh %}
+                    <div style="color:var(--text-secondary); font-size:.67rem; display:flex; align-items:center; gap:.25rem; margin-top:.15rem;">
+                        <i class="fas fa-users" style="font-size:.58rem;"></i> {{ dars.guruh.nomi }}
+                    </div>
+                    {% endif %}
+                    {% if dars.xona %}
+                    <div style="color:var(--text-secondary); font-size:.67rem; display:flex; align-items:center; gap:.25rem; margin-top:.15rem;">
+                        <i class="fas fa-map-marker-alt" style="font-size:.58rem;"></i> {{ dars.xona }}
+                    </div>
+                    {% endif %}
+
+                    <!-- Belgilash tugmasi -->
+                    <button onclick="darsToggle({{ dars.pk }})" id="btn-{{ dars.pk }}"
+                        style="margin-top:.5rem; width:100%; padding:.28rem; border-radius:6px; border:none;
+                               cursor:pointer; font-size:.67rem; font-weight:700; transition:all .2s;
+                               background:{% if dars.bajarildi %}#10b981{% else %}#e5e7eb{% endif %};
+                               color:{% if dars.bajarildi %}#fff{% else %}#6b7280{% endif %};">
+                        {% if dars.bajarildi %}<i class="fas fa-check-circle"></i> O'tildi
+                        {% else %}<i class="far fa-circle"></i> Belgilash{% endif %}
+                    </button>
+                </div>
+                {% empty %}
+                <div style="text-align:center; color:var(--text-secondary); font-size:.72rem;
+                            padding:.8rem .3rem; border:1px dashed var(--border-color); border-radius:8px;">—</div>
+                {% endfor %}
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+
+<!-- ── FAN BO'YICHA STATISTIKA ────────────────────────────────── -->
+{% if fan_statistika %}
+<div class="card">
+    <div style="padding:1.1rem 1.4rem; border-bottom:1px solid var(--border-color); display:flex; align-items:center; gap:.75rem;">
+        <i class="fas fa-chart-bar" style="color:#6366f1; font-size:1.1rem;"></i>
+        <div>
+            <h3 style="margin:0; font-size:1rem; font-weight:700;">Fan bo'yicha statistika</h3>
+            <p style="margin:0; font-size:.75rem; color:var(--text-secondary);">Har bir fan uchun o'tilgan va qolgan darslar</p>
+        </div>
+    </div>
+    <div style="overflow-x:auto;">
+        <table style="width:100%; border-collapse:collapse; font-size:.83rem;">
+            <thead>
+                <tr style="background:var(--bg-secondary);">
+                    <th style="padding:10px 16px; text-align:left; border-bottom:2px solid var(--border-color);">Fan nomi</th>
+                    <th style="padding:10px 10px; text-align:center; border-bottom:2px solid var(--border-color);">Jami</th>
+                    <th style="padding:10px 10px; text-align:center; border-bottom:2px solid var(--border-color); color:#10b981;">O'tildi ✓</th>
+                    <th style="padding:10px 10px; text-align:center; border-bottom:2px solid var(--border-color); color:#f59e0b;">Qoldi</th>
+                    <th style="padding:10px 16px; border-bottom:2px solid var(--border-color);">Holat</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for fs in fan_statistika %}
+                <tr style="border-bottom:1px solid var(--border-color); transition:background .15s;"
+                    onmouseenter="this.style.background='var(--bg-secondary)'"
+                    onmouseleave="this.style.background=''">
+                    <td style="padding:11px 16px; font-weight:600;">{{ fs.fan }}</td>
+                    <td style="padding:11px 10px; text-align:center; font-weight:700; color:var(--text-primary);">{{ fs.jami }}</td>
+                    <td style="padding:11px 10px; text-align:center;">
+                        <span style="background:#d1fae5; color:#059669; border-radius:6px; padding:3px 12px; font-weight:700;">
+                            {{ fs.bajarildi }}
+                        </span>
+                    </td>
+                    <td style="padding:11px 10px; text-align:center;">
+                        <span style="border-radius:6px; padding:3px 12px; font-weight:700;
+                                     {% if fs.qoldi == 0 %}background:#d1fae5; color:#059669;{% else %}background:#fef3c7; color:#d97706;{% endif %}">
+                            {{ fs.qoldi }}
+                        </span>
+                    </td>
+                    <td style="padding:11px 16px;">
+                        <div style="display:flex; align-items:center; gap:.6rem;">
+                            <div style="flex:1; height:8px; background:#e5e7eb; border-radius:4px; overflow:hidden;">
+                                <div style="width:{{ fs.foiz }}%; height:100%; border-radius:4px; transition:width .4s;
+                                            background:{% if fs.foiz == 100 %}#10b981{% elif fs.foiz >= 50 %}#6366f1{% else %}#f59e0b{% endif %};"></div>
+                            </div>
+                            <span style="font-size:.76rem; font-weight:700; min-width:34px; text-align:right;
+                                         color:{% if fs.foiz == 100 %}#10b981{% elif fs.foiz >= 50 %}#6366f1{% else %}#f59e0b{% endif %};">
+                                {{ fs.foiz }}%
+                            </span>
+                        </div>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+            <tfoot>
+                <tr style="background:var(--bg-secondary); font-weight:700;">
+                    <td style="padding:10px 16px;">JAMI</td>
+                    <td style="padding:10px 10px; text-align:center;">{{ jami_dars }}</td>
+                    <td style="padding:10px 10px; text-align:center; color:#059669;">{{ bajarilgan_dars }}</td>
+                    <td style="padding:10px 10px; text-align:center; color:#d97706;">{{ qolgan_dars }}</td>
+                    <td style="padding:10px 16px;">
+                        <div style="display:flex; align-items:center; gap:.6rem;">
+                            <div style="flex:1; height:8px; background:#e5e7eb; border-radius:4px; overflow:hidden;">
+                                <div style="width:{% if jami_dars %}{% widthratio bajarilgan_dars jami_dars 100 %}{% else %}0{% endif %}%;
+                                            height:100%; background:#6366f1; border-radius:4px;"></div>
+                            </div>
+                            <span style="font-size:.76rem; font-weight:700; color:#6366f1; min-width:34px; text-align:right;">
+                                {% if jami_dars %}{% widthratio bajarilgan_dars jami_dars 100 %}{% else %}0{% endif %}%
+                            </span>
+                        </div>
+                    </td>
+                </tr>
+            </tfoot>
+        </table>
+    </div>
+</div>
+{% endif %}
+
+{% endblock %}
+
+{% block scripts %}
+<script>
+const CSRF = '{{ csrf_token }}';
+
+function darsToggle(pk) {
+    const btn  = document.getElementById('btn-' + pk);
+    const card = document.getElementById('dars-card-' + pk);
+    btn.disabled = true;
+
+    fetch(`/dars/${pk}/belgilash/`, {
+        method: 'POST',
+        headers: {'X-CSRFToken': CSRF},
+    })
+    .then(r => r.json())
+    .then(data => {
+        if (data.bajarildi) {
+            btn.style.background = '#10b981';
+            btn.style.color = '#fff';
+            btn.innerHTML = '<i class="fas fa-check-circle"></i> O\'tildi';
+
+            if (!card.querySelector('.done-badge')) {
+                const badge = document.createElement('span');
+                badge.className = 'done-badge';
+                badge.style.cssText = 'position:absolute;top:.35rem;right:.35rem;background:#10b981;color:#fff;border-radius:50%;width:17px;height:17px;display:flex;align-items:center;justify-content:center;font-size:.58rem;';
+                badge.innerHTML = '<i class="fas fa-check"></i>';
+                card.appendChild(badge);
+            }
+            // Kartochka fonini o'zgartirish
+            const borderColor = card.style.borderLeftColor;
+            if (borderColor.includes('59, 130, 246')) card.style.background = '#dbeafe';
+            else if (borderColor.includes('16, 185, 129')) card.style.background = '#d1fae5';
+            else if (borderColor.includes('139, 92, 246')) card.style.background = '#ede9fe';
+            else card.style.background = '#fef3c7';
+        } else {
+            btn.style.background = '#e5e7eb';
+            btn.style.color = '#6b7280';
+            btn.innerHTML = '<i class="far fa-circle"></i> Belgilash';
+            const badge = card.querySelector('.done-badge');
+            if (badge) badge.remove();
+            card.style.background = 'var(--bg-secondary)';
+        }
+        btn.disabled = false;
+        // Statistikani yangilash
+        setTimeout(() => location.reload(), 600);
+    })
+    .catch(() => { btn.disabled = false; alert('Xatolik yuz berdi'); });
+}
+</script>
+{% endblock %}

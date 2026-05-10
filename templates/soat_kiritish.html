@@ -1,0 +1,75 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="page-header">
+    <div>
+        <h2>Bajarilgan soatlarni kiritish</h2>
+        <p style="color:#64748b;margin-top:6px;">{{ oqituvchi_ism }} — dars o'tilgandan so'ng yoki hafta yakunida bajarilgan soatlarni belgilang.</p>
+    </div>
+</div>
+
+<div class="planning-grid">
+    <div class="card">
+        <h3 class="card-title">Yangi soat kiritish</h3>
+        <form class="planning-form">
+            <div class="form-group">
+                <label>Sana</label>
+                <input type="date" class="form-control">
+            </div>
+            <div class="form-group">
+                <label>Fan</label>
+                <select class="form-control">
+                    <option>Kvant mexanikasi</option>
+                    <option>Yadro fizikasi</option>
+                    <option>Elektrodinamika</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label>Guruh</label>
+                <select class="form-control">
+                    <option>201-A</option><option>301-A</option><option>101-A</option>
+                </select>
+            </div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Dars turi</label>
+                    <select class="form-control">
+                        <option>Ma'ruza</option><option>Amaliyot</option>
+                        <option>Laboratoriya</option><option>Seminar</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Soat</label>
+                    <input type="number" class="form-control" placeholder="2" step="0.5">
+                </div>
+            </div>
+            <button type="button" class="btn btn-dark btn-block">
+                <i class="fas fa-check"></i> Bajarildi deb belgilash
+            </button>
+            <p style="margin-top:10px;font-size:12px;color:#64748b;">
+                <i class="fas fa-info-circle"></i> Tizim elektron jurnalga ulangan bo'lsa, bu jarayon avtomatik amalga oshadi.
+            </p>
+        </form>
+    </div>
+
+    <div class="card">
+        <h3 class="card-title">So'nggi kirimlar (Shu hafta: {{ jami_hafta }} soat)</h3>
+        <table class="data-table plan-table">
+            <thead>
+                <tr><th>SANA</th><th>FAN</th><th>GURUH</th><th>TURI</th><th>SOAT</th></tr>
+            </thead>
+            <tbody>
+                {% for k in kirimlar %}
+                <tr>
+                    <td>{{ k.sana }}</td>
+                    <td>{{ k.fan }}</td>
+                    <td>{{ k.guruh }}</td>
+                    <td>{{ k.turi }}</td>
+                    <td><strong>{{ k.soat }}</strong></td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}
