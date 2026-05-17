@@ -2,48 +2,45 @@ from django.core.management.base import BaseCommand
 from app.models import Kafedra, Oqituvchi, Yuklama
 
 
+# Rasmdagi ma'lumotlar (2024-2025 o'quv yili)
+# (familiya_ism, lavozim, ilmiy_daraja, stavka, stavka_turi,
+#  maruza_reja, amaliyot_reja, lab_reja,
+#  maruza_bajarildi, amaliyot_bajarildi, lab_bajarildi,
+#  bajarilgan_foiz)
 OQITUVCHILAR = [
-    # (familiya, ism, sharif, lavozim, ilmiy_daraja, stavka, stavka_turi,
-    #  maruza_soat, amaliyot_soat, lab_soat, jami_bajarilgan_foiz)
-    ("Раҳимов", "А.", "Х.", "professor",     "д.т.н.",  1.0, "asosiy",   230, 110, 60,  85),
-    ("Саидмуродов", "Ф.", "Б.", "dotsent",   "PhD",     1.0, "asosiy",   180, 90,  40,  78),
-    ("Рашидов", "Ж.", "Р.", "dotsent",       "PhD",     1.0, "asosiy",   160, 80,  30,  80),
-    ("Исмоилов", "Б.", "И.", "katta_oqituvchi", "",     1.0, "asosiy",   140, 70,  20,  72),
-    ("Раҳимова", "Б.", "С.", "katta_oqituvchi", "",     1.0, "asosiy",   130, 60,  20,  70),
-    ("Тоҳирова", "М.", "Б.", "oqituvchi",    "",        1.0, "asosiy",   120, 60,  0,   68),
-    ("Тошматов", "А.", "Т.", "oqituvchi",    "",        1.0, "asosiy",   110, 50,  0,   65),
-    ("Исмоилова", "З.", "А.", "oqituvchi",   "",        1.0, "asosiy",   100, 50,  0,   60),
-    ("Нурматов", "Б.", "Н.", "oqituvchi",    "",        0.5, "orindosh", 80,  40,  0,   55),
-    ("Мирзаев", "Ш.", "М.", "oqituvchi",    "",         0.5, "orindosh", 70,  30,  0,   50),
-    ("Холматов", "А.", "Х.", "assistant",    "",        1.0, "asosiy",   60,  30,  0,   45),
-    ("Юсупов", "Д.", "Ю.", "assistant",      "",        1.0, "asosiy",   60,  30,  0,   45),
-    ("Қодиров", "Ф.", "Қ.", "stajyor",       "",        1.0, "asosiy",   40,  20,  0,   30),
-    ("Маматов", "О.", "М.", "stajyor",       "",        1.0, "asosiy",   40,  20,  0,   30),
-    ("Хасанов", "Ж.", "Х.", "oqituvchi",    "",         0.5, "orindosh", 50,  20,  0,   40),
-    ("Бекова", "Н.", "Б.", "oqituvchi",      "",        0.5, "orindosh", 50,  20,  0,   40),
-    ("Турсунов", "С.", "Т.", "katta_oqituvchi", "",     1.0, "asosiy",   120, 60,  20,  65),
-    ("Каримов", "Б.", "К.", "dotsent",       "PhD",     0.5, "orindosh", 90,  40,  0,   60),
-    ("Азимов", "Р.", "А.", "oqituvchi",      "",        1.0, "asosiy",   80,  40,  0,   50),
-    ("Уринов", "Х.", "У.", "oqituvchi",      "",        1.0, "asosiy",   80,  40,  0,   50),
+    ("Раҳимов Х.А.",       "professor",        "д.т.н.",  1.0, "asosiy",   170, 136, 68,  170, 136, 68,  100),
+    ("Саидмуродов",        "dotsent",          "PhD",     1.0, "asosiy",   148, 118, 40,  148, 118, 40,  100),
+    ("Рашидов",            "katta_oqituvchi",  "",        1.0, "asosiy",   136, 108, 32,  136, 108, 32,  100),
+    ("Исмоилов",           "katta_oqituvchi",  "",        1.0, "asosiy",   118,  96, 24,  118,  96, 24,  100),
+    ("Раҳимова",           "katta_oqituvchi",  "",        1.0, "asosiy",   114,  90,  0,  114,  90,  0,  100),
+    ("Тоширов",            "oqituvchi",        "",        1.0, "asosiy",   100,  80,  0,  100,  80,  0,  100),
+    ("Норматов",           "oqituvchi",        "",        1.0, "asosiy",    90,  72,  0,   90,  72,  0,  100),
+    ("Исмоилова",          "oqituvchi",        "",        0.5, "orindosh",  60,  48,  0,   60,  48,  0,  100),
+    ("Нурмуродов",         "assistant",        "",        1.0, "asosiy",    60,  48,  0,   60,  48,  0,  100),
+    ("Хасанов",            "assistant",        "",        1.0, "asosiy",    54,  40,  0,   54,  40,  0,  100),
+    ("Маматов",            "stajyor",          "",        1.0, "asosiy",    40,  32,  0,   40,  32,  0,  100),
 ]
 
 
 class Command(BaseCommand):
-    help = "Rasmdagi o'qituvchilar va yuklama ma'lumotlarini bazaga kiritadi"
+    help = "rasm1.png dagi o'qituvchilar yuklama ma'lumotlarini bazaga kiritadi"
 
     def handle(self, *args, **options):
         kafedra, _ = Kafedra.objects.get_or_create(nomi="Kafedra")
-        self.stdout.write(f"Kafedra: {kafedra.nomi}")
 
         for row in OQITUVCHILAR:
-            familiya, ism, sharif, lavozim, ilmiy_daraja, stavka, stavka_turi, \
-                maruza, amaliyot, lab, foiz = row
+            (toliq_ism, lavozim, ilmiy_daraja, stavka, stavka_turi,
+             maruza_r, amaliyot_r, lab_r,
+             maruza_b, amaliyot_b, lab_b, foiz) = row
 
-            toliq_ism = f"{ism} {sharif}".strip()
+            # Ism va familiyani ajratamiz
+            qismlar = toliq_ism.split()
+            familiya = qismlar[0]
+            ism = " ".join(qismlar[1:]) if len(qismlar) > 1 else ""
 
             oqituvchi, yaratildi = Oqituvchi.objects.get_or_create(
                 familiya=familiya,
-                ism=toliq_ism,
+                ism=ism,
                 defaults={
                     "lavozim": lavozim,
                     "ilmiy_daraja": ilmiy_daraja,
@@ -53,22 +50,20 @@ class Command(BaseCommand):
                 },
             )
 
-            if not yaratildi:
-                self.stdout.write(f"  Mavjud: {familiya} {toliq_ism}")
-            else:
-                self.stdout.write(f"  Yaratildi: {familiya} {toliq_ism}")
+            holat = "Yaratildi" if yaratildi else "Mavjud"
+            self.stdout.write(f"  {holat}: {toliq_ism}")
 
             Yuklama.objects.get_or_create(
                 oqituvchi=oqituvchi,
                 oquv_yili="2024-2025",
                 defaults={
-                    "maruza_soat": maruza,
-                    "amaliyot_soat": amaliyot,
-                    "laboratoriya_soat": lab,
+                    "maruza_soat": maruza_b,
+                    "amaliyot_soat": amaliyot_b,
+                    "laboratoriya_soat": lab_b,
                     "bajarilgan_foiz": foiz,
                 },
             )
 
         self.stdout.write(self.style.SUCCESS(
-            f"\nJami {len(OQITUVCHILAR)} ta o'qituvchi va yuklama kiritildi."
+            f"\nJami {len(OQITUVCHILAR)} ta o'qituvchi kiritildi."
         ))
