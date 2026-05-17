@@ -77,6 +77,31 @@ class Guruh(models.Model):
         verbose_name_plural = "Guruhlar"
 
 
+class Talaba(models.Model):
+    JINSI_CHOICES = [('erkak', 'Erkak'), ('ayol', 'Ayol')]
+
+    guruh = models.ForeignKey(Guruh, on_delete=models.CASCADE, related_name='talabalar')
+    ism = models.CharField(max_length=100)
+    familiya = models.CharField(max_length=100)
+    sharif = models.CharField(max_length=100, blank=True)
+    talaba_id = models.CharField(max_length=20, unique=True)
+    jinsi = models.CharField(max_length=10, choices=JINSI_CHOICES, default='erkak')
+    tugilgan_sana = models.DateField(null=True, blank=True)
+    telefon = models.CharField(max_length=20, blank=True)
+    email = models.EmailField(blank=True)
+
+    def __str__(self):
+        return f"{self.familiya} {self.ism}"
+
+    @property
+    def toliq_ism(self):
+        return f"{self.familiya} {self.ism} {self.sharif}".strip()
+
+    class Meta:
+        verbose_name_plural = "Talabalar"
+        ordering = ['familiya', 'ism']
+
+
 class Dars(models.Model):
     TURI_CHOICES = [
         ('maruza', "Ma'ruza"),

@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Kafedra, Oqituvchi, Fan, Guruh, Dars, Yuklama, Reyting, OylikStatistika, FanYuklama
+from .models import Kafedra, Oqituvchi, Fan, Guruh, Dars, Yuklama, Reyting, OylikStatistika, FanYuklama, Talaba
 
 
 @admin.register(Kafedra)
@@ -45,6 +45,13 @@ class FanYuklamaAdmin(admin.ModelAdmin):
     list_display = ['oqituvchi', 'fan_nomi', 'semestr', 'kurs', 'talabalar_soni', 'jami']
     list_filter = ['semestr', 'oquv_yili', 'oqituvchi']
     search_fields = ['fan_nomi', 'oqituvchi__ism', 'oqituvchi__familiya']
+
+
+@admin.register(Talaba)
+class TalabaAdmin(admin.ModelAdmin):
+    list_display = ['familiya', 'ism', 'sharif', 'talaba_id', 'guruh', 'jinsi']
+    list_filter = ['guruh', 'jinsi']
+    search_fields = ['familiya', 'ism', 'talaba_id']
 
 
 @admin.register(OylikStatistika)
