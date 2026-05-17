@@ -8,7 +8,7 @@ from app.models import Kafedra, Oqituvchi, Yuklama
 #  maruza_bajarildi, amaliyot_bajarildi, lab_bajarildi,
 #  bajarilgan_foiz)
 OQITUVCHILAR = [
-    ("Раҳимов Х.А.",       "professor",        "д.т.н.",  1.0, "asosiy",   170, 136, 68,  170, 136, 68,  100),
+    ("Раҳмонов Х.А.",      "professor",        "д.т.н.",  1.0, "asosiy",   170, 136, 68,  170, 136, 68,  100),
     ("Саидмуродов",        "dotsent",          "PhD",     1.0, "asosiy",   148, 118, 40,  148, 118, 40,  100),
     ("Рашидов",            "katta_oqituvchi",  "",        1.0, "asosiy",   136, 108, 32,  136, 108, 32,  100),
     ("Исмоилов",           "katta_oqituvchi",  "",        1.0, "asosiy",   118,  96, 24,  118,  96, 24,  100),
