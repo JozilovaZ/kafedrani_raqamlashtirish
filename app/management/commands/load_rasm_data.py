@@ -28,6 +28,9 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
         kafedra, _ = Kafedra.objects.get_or_create(nomi="Kafedra")
 
+        # Eski noto'g'ri yozilgan Раҳимов → Раҳмонов ga o'zgartiramiz
+        Oqituvchi.objects.filter(familiya="Раҳимов", ism="Х.А.").update(familiya="Раҳмонов")
+
         for row in OQITUVCHILAR:
             (toliq_ism, lavozim, ilmiy_daraja, stavka, stavka_turi,
              maruza_r, amaliyot_r, lab_r,
