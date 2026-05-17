@@ -44,6 +44,17 @@ class Command(BaseCommand):
         if renamed:
             self.stdout.write(f"  Nom to'g'irlandi: Раҳимов → Раҳмонов")
 
+        # Duplikatlarni tozalab olamiz
+        for row in OQITUVCHILAR:
+            qismlar = row[0].split()
+            fam = qismlar[0]
+            ism_ = " ".join(qismlar[1:]) if len(qismlar) > 1 else ""
+            qs = Oqituvchi.objects.filter(familiya=fam, ism=ism_)
+            if qs.count() > 1:
+                keep = qs.first()
+                qs.exclude(pk=keep.pk).delete()
+                self.stdout.write(f"  Duplikat o'chirildi: {row[0]}")
+
         for row in OQITUVCHILAR:
             (toliq_ism, lavozim, ilmiy_daraja, stavka, stavka_turi,
              maruza_r, amaliyot_r, lab_r,
